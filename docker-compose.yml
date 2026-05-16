@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  # ── FastAPI Backend ──
+  api:
+    build: .
+    container_name: doc-intelligence-api
+    ports:
+      - "8000:8000"
+    environment:
+      - LLM_PROVIDER=${LLM_PROVIDER:-github}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - GITHUB_MODEL=${GITHUB_MODEL:-gpt-4o}
+      - GITHUB_TEMPERATURE=${GITHUB_TEMPERATURE:-0.2}
+      # Groq fallback — only needed if LLM_PROVIDER=groq
+      - GROQ_API_KEY=${GROQ_API_KEY:-}
+      - GROQ_MODEL=${GROQ_MODEL:-llama-3.1-8b-instant}
+      # Embeddings & storage
+      - EMBEDDING_PROVIDER=${EMBEDDING_PROVIDER:-openai}
+      - EMBEDDING_MODEL=${EMBEDDING_MODEL:-text-embedding-3-small}
+      - CHROMA_PERSIST_DIR=/app/chroma_db
+      - CHROMA_COLLECTION_NAME=${CHROMA_COLLECTION_NAME:-document_intelligence}
+      - UPLOAD_DIR=/app/data/uploads
+      - MAX_CHUNK_SIZE=${MAX_CHUNK_SIZE:-1000}
+      - CHUNK_OVERLAP=${CHUNK_OVERLAP:-200}
+      - TOP_K_RESULTS=${TOP_K_RESULTS:-5}
+      # CORS — update for production frontend URL
+      - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:3000,http://localhost:5173}
+    volumes:
+      - ./data:/app/data
+      - ./chroma_db:/app/chroma_db
+      - ./logs:/app/logs
+    command: uvicorn app.api:app --host 0.0.0.0 --port 8000
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+
+networks:
+  default:
+    name: doc-intelligence-network
