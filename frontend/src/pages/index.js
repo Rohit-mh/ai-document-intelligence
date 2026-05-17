@@ -1,2 +1,5 @@
 export { ChatPage } from './ChatPage'
 export { LandingPage } from './LandingPage'
+export { DashboardPage } from './DashboardPage'
+export { StatusPage } from './StatusPage'
+export { UploadPage } from './UploadPage'

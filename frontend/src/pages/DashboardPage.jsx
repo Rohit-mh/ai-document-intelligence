@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Card, Button, LoadingSpinner, Alert, Badge } from '../components'
-import { getConciseSummary, getDetailedSummary, getInsights } from '../services'
+import { getConciseSummary, getDetailedSummary, getInsights, getStats } from '../services'
 import { useAsync } from '../hooks'
 
 const SummaryTab = ({ document, onSummaryGenerated }) => {
@@ -164,17 +164,66 @@ const InsightsTab = ({ document }) => {
   )
 }
 
-export const DashboardPage = ({ documents = [], selectedDocumentId = null }) => {
+export const DashboardPage = ({ documents: initialDocuments = [], selectedDocumentId = null }) => {
   const [activeTab, setActiveTab] = useState('summary')
-  const [selectedDocument, setSelectedDocument] = useState(
-    documents.find(d => d.id === selectedDocumentId) || documents[0] || null
-  )
+  const [documents, setDocuments] = useState(initialDocuments)
+  const [selectedDocument, setSelectedDocument] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    const fetchDocs = async () => {
+      if (initialDocuments && initialDocuments.length > 0) {
+        setDocuments(initialDocuments)
+        setSelectedDocument(
+          initialDocuments.find(d => d.id === selectedDocumentId) || initialDocuments[0] || null
+        )
+        return
+      }
+
+      setLoading(true)
+      setError(null)
+      try {
+        const stats = await getStats()
+        if (stats && stats.documents) {
+          setDocuments(stats.documents)
+          setSelectedDocument(
+            stats.documents.find(d => d.id === selectedDocumentId) || stats.documents[0] || null
+          )
+        }
+      } catch (err) {
+        setError(err.message)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchDocs()
+  }, [initialDocuments, selectedDocumentId])
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <LoadingSpinner />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="max-w-2xl mx-auto py-12">
+        <Alert variant="error" className="mb-6">
+          {error}
+        </Alert>
+      </div>
+    )
+  }
 
   if (documents.length === 0) {
     return (
       <div className="text-center py-12">
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">Dashboard</h1>
-        <p className="text-gray-600 mb-6">No documents uploaded yet</p>
+        <h1 className="text-3xl font-bold text-zinc-100 mb-4">Dashboard</h1>
+        <p className="text-zinc-400 mb-6">No documents uploaded yet</p>
         <Button onClick={() => window.location.href = '/'}>
           Upload Your First Document
         </Button>

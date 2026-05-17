@@ -154,7 +154,7 @@ export const StatusPage = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
           <div>
             <p className="text-zinc-400">API server (frontend env):</p>
-            <p className="font-medium break-all">{import.meta.env.VITE_API_URL || 'http://localhost:8000'}</p>
+            <p className="font-medium break-all">{import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || 'http://localhost:8000'}</p>
           </div>
           <div>
             <p className="text-zinc-400">Embedding model:</p>

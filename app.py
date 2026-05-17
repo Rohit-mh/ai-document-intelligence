@@ -2,8 +2,7 @@
 Main entry point for the Document Intelligence System.
 
 Usage:
-    # Run Streamlit UI:
-    streamlit run app/streamlit_app.py
+
 
     # Run FastAPI backend:
     uvicorn app.api:app --reload --port 8000
@@ -62,7 +61,7 @@ def main():
     print()
 
     print("Available commands:")
-    print("  streamlit run app/streamlit_app.py    — Launch UI")
+
     print("  uvicorn app.api:app --reload          — Launch API")
     print("  adk web .                             — ADK Dev UI")
     print("  adk run .                             — ADK CLI")

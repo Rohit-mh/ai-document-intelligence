@@ -33,7 +33,7 @@ app = FastAPI(
 )
 
 def _cors_allow_origins() -> list[str]:
-    raw = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000,http://localhost:5173,http://127.0.0.1:5173").strip()
+    raw = os.getenv("CORS_ORIGINS", "http://localhost:3000,http://127.0.0.1:3000,http://localhost:5173,http://127.0.0.1:5173,https://gorgeous-biscotti-e746e6.netlify.app").strip()
     if os.getenv("CORS_ALLOW_ALL", "").lower() in ("1", "true", "yes"):
         return ["*"]
     return [o.strip() for o in raw.split(",") if o.strip()] or ["http://localhost:3000"]
