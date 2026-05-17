@@ -48,7 +48,7 @@ export const Header = ({ systemStatus = null }) => {
           {/* Status Badge */}
           {systemStatus && (
             <div className="flex items-center gap-2">
-              {systemStatus.healthy ? (
+              {systemStatus.status === 'healthy' || systemStatus.healthy ? (
                 <div className="flex items-center gap-1.5 px-2 py-1 bg-emerald-500/10 rounded-full border border-emerald-500/20">
                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                    <span className="text-[10px] font-bold text-emerald-500 uppercase tracking-tighter">Live</span>
