@@ -1,0 +1,12 @@
+# Netlify Configuration File
+# This file automatically tells Netlify how to build the React + Vite frontend in the "frontend" subdirectory.
+
+[build]
+  base = "frontend"
+  publish = "dist"
+  command = "npm run build"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
