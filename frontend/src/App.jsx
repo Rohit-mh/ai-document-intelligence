@@ -1,12 +1,10 @@
 import React from 'react'
-import { BrowserRouter, Routes, Route, Navigate, useNavigate } from 'react-router-dom'
-import { LandingPage, ChatPage, DashboardPage, StatusPage, UploadPage } from './pages'
-import { MainLayout } from './layouts/MainLayout'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { LandingPage, ChatPage } from './pages'
 import { AuthProvider, useAuth } from './context/AuthContext'
 
 function AppContent() {
   const { user, loading } = useAuth()
-  const navigate = useNavigate()
 
   if (loading) {
     return (
@@ -19,56 +17,13 @@ function AppContent() {
   return (
     <div className="bg-zinc-950 min-h-screen text-zinc-100 font-sans selection:bg-purple-500/30">
       <Routes>
-        {/* If user is logged in, "/" renders UploadPage inside MainLayout.
-            If not, "/" renders LandingPage */}
+        {/* If user is logged in, "/" renders ChatPage. If not, "/" renders LandingPage */}
         <Route 
           path="/" 
-          element={
-            user ? (
-              <MainLayout>
-                <UploadPage onDocumentUploaded={() => navigate('/dashboard')} />
-              </MainLayout>
-            ) : (
-              <LandingPage />
-            )
-          } 
+          element={user ? <ChatPage /> : <LandingPage />} 
         />
 
-        {/* /chat is the ChatPage (full-screen, no MainLayout wrapper needed) */}
-        <Route 
-          path="/chat" 
-          element={user ? <ChatPage /> : <Navigate to="/" replace />} 
-        />
-
-        {/* /dashboard is the DashboardPage inside MainLayout */}
-        <Route 
-          path="/dashboard" 
-          element={
-            user ? (
-              <MainLayout>
-                <DashboardPage />
-              </MainLayout>
-            ) : (
-              <Navigate to="/" replace />
-            )
-          } 
-        />
-
-        {/* /status is the StatusPage inside MainLayout */}
-        <Route 
-          path="/status" 
-          element={
-            user ? (
-              <MainLayout>
-                <StatusPage />
-              </MainLayout>
-            ) : (
-              <Navigate to="/" replace />
-            )
-          } 
-        />
-
-        {/* Fallback to home */}
+        {/* Fallback all other routes to "/" */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </div>
